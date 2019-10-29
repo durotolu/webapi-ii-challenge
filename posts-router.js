@@ -120,4 +120,31 @@ router.delete('/:id', (req, res) => {
         })
 })
 
+router.put('/:id', (req, res) => {
+    if (!req.body.title || !req.body.contents) {
+        res.status(400).json({
+            success: false,
+            errorMessage: "Please provide title and contents for the post."
+        })
+    } else {
+        Posts.update(req.params.id, req.body)
+            .then(updated => {
+                if(!updated) {
+                    res.status(404).json({
+                        success: false,
+                        message: "The post with the specified ID does not exist."
+                    })
+                } else {
+                    res.status(200).json({
+                        success: true,
+                        updated: req.body,
+                    })
+                }
+            })
+            .catch(error => {
+                res.status(500).json(error.message)
+            })
+    }
+})
+
 module.exports = router;
